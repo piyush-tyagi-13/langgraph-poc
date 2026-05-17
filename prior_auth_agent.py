@@ -15,6 +15,8 @@ from langgraph.prebuilt import ToolNode
 from langgraph.checkpoint.sqlite import SqliteSaver
 
 load_dotenv()
+from prior_auth.phoenix_setup import setup_phoenix
+setup_phoenix()
 
 llm = ChatGroq(
     model="llama-3.3-70b-versatile",
@@ -251,14 +253,14 @@ if __name__ == "__main__":
     print("Starting Prior Authorization Workflow...\n")
     print("=" * 60)
 
-    # for chunk in graph.stream(initial_state, config=config):
-    #     for node_name, node_output in chunk.items():
-    #         print(f"\n[{node_name.upper()}]")
-    #         if "messages" in node_output:
-    #             for msg in node_output["messages"]:
-    #                 print(f"  {msg}")
-    #         if "final_decision" in node_output and node_output["final_decision"]:
-    #             print(f"\n{'=' * 60}")
-    #             print("FINAL DECISION:")
-    #             print(clean_output(node_output["final_decision"]))  # add clean_output here
-    #             print("=" * 60)
+    for chunk in graph.stream(initial_state, config=config):
+        for node_name, node_output in chunk.items():
+            print(f"\n[{node_name.upper()}]")
+            if "messages" in node_output:
+                for msg in node_output["messages"]:
+                    print(f"  {msg}")
+            if "final_decision" in node_output and node_output["final_decision"]:
+                print(f"\n{'=' * 60}")
+                print("FINAL DECISION:")
+                print(clean_output(node_output["final_decision"]))  # add clean_output here
+                print("=" * 60)

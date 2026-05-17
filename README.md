@@ -113,6 +113,46 @@ Execute the prior authorization workflow:
 python main.py
 ```
 
+### Using Phoenix for Observability
+
+Phoenix provides real-time tracing and debugging for LLM applications. To use it with the monolithic script:
+
+1. Start the Phoenix UI in a separate terminal:
+   ```bash
+   phoenix serve --host 0.0.0.0 --port 6006
+   ```
+   The UI will be available at `http://localhost:6006`
+
+2. Add Phoenix instrumentation to your script (e.g., `prior_auth_agent.py`) at the very top, before any LangChain imports:
+   ```python
+   from prior_auth.phoenix_setup import setup_phoenix
+   setup_phoenix()
+   
+   # ... rest of your imports and code
+   ```
+
+   Or manually instrument:
+   ```python
+   import phoenix as px
+   from openinference.instrumentation.langchain import LangChainInstrumentor
+   from phoenix.otel import register
+
+   px.launch_app()
+   tracer_provider = register(endpoint="http://localhost:6006/v1/traces")
+   LangChainInstrumentor().instrument(tracer_provider=tracer_provider)
+   ```
+
+3. Run your workflow and observe traces in the Phoenix UI in real-time:
+   ```bash
+   python prior_auth_agent.py
+   ```
+
+**Phoenix Dashboard Features:**
+- View LLM traces and chain execution flow
+- Inspect prompt/completion tokens and latency
+- Debug tool calls and agent routing decisions
+- Monitor LLM costs and performance metrics
+
 **Sample Output:**
 ```
 Starting Prior Authorization Workflow...
@@ -245,7 +285,9 @@ Uses `Annotated[list, operator.add]` for messages to automatically append new ou
 
 ## Dependencies
 
-See [requirements.txt](requirements.txt) for exact versions.
+See [requirements.txt](requirements.txt) for exact ve
+- **Arize Phoenix** - LLM observability and tracing
+- **OpenInference LangChain Instrumentation** - Automatic LangChain tracingrsions.
 
 - **LangChain Core** - LLM abstractions and tools
 - **LangGraph** - Agentic workflow framework

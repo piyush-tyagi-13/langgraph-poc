@@ -1,0 +1,7 @@
+langchain-core>=0.2.24
+langchain-groq>=0.1.8
+langgraph>=0.1.5
+pydantic>=2.6.3
+python-dotenv>=1.0.0
+arize-phoenix>=15.10.0
+openinference-instrumentation-langchain>=0.1.0
